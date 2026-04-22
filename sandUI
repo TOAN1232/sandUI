@@ -1,5 +1,5 @@
 --[[
-    SandUI Library - Portrait Edition (Upgraded: Resizable & Nameable)
+    SandUI Library - Portrait Edition (Upgraded: Resizable, Nameable & 3px Corners)
     Theme: Sand (Warm Beige/Orange)
     Author: Gemini
 --]]
@@ -28,7 +28,7 @@ function SandUI:CreateWindow(title)
     Main.Active = true
 
     local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.CornerRadius = UDim.new(0, 3) -- Updated to 3px
     UICorner.Parent = Main
 
     local UIStroke = Instance.new("UIStroke")
@@ -43,6 +43,19 @@ function SandUI:CreateWindow(title)
     Header.BackgroundColor3 = Color3.fromRGB(210, 180, 140) -- Tan
     Header.Size = UDim2.new(1, 0, 0, 30)
     Header.BorderSizePixel = 0
+
+    local HeaderCorner = Instance.new("UICorner")
+    HeaderCorner.CornerRadius = UDim.new(0, 3) -- Updated to 3px
+    HeaderCorner.Parent = Header
+
+    -- Fix for header bottom corners (preventing gap)
+    local HeaderBottomFix = Instance.new("Frame")
+    HeaderBottomFix.Name = "HeaderBottomFix"
+    HeaderBottomFix.Parent = Header
+    HeaderBottomFix.BackgroundColor3 = Color3.fromRGB(210, 180, 140)
+    HeaderBottomFix.BorderSizePixel = 0
+    HeaderBottomFix.Position = UDim2.new(0, 0, 1, -5)
+    HeaderBottomFix.Size = UDim2.new(1, 0, 0, 5)
 
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Parent = Header
@@ -84,18 +97,18 @@ function SandUI:CreateWindow(title)
     PageContainer.Position = UDim2.new(0, 85, 0, 35)
     PageContainer.Size = UDim2.new(1, -90, 1, -40)
 
-    -- Resize Handle (Bottom Right Corner)
+    -- Resize Handle
     local ResizeHandle = Instance.new("ImageLabel")
     ResizeHandle.Name = "ResizeHandle"
     ResizeHandle.Parent = Main
     ResizeHandle.BackgroundTransparency = 1
     ResizeHandle.Position = UDim2.new(1, -15, 1, -15)
     ResizeHandle.Size = UDim2.new(0, 15, 0, 15)
-    ResizeHandle.Image = "rbxassetid://12133575604" -- Diagonal Resize Icon
+    ResizeHandle.Image = "rbxassetid://12133575604"
     ResizeHandle.ImageColor3 = Color3.fromRGB(150, 120, 80)
     ResizeHandle.ZIndex = 5
 
-    -- Logic: Dragging
+    -- Dragging Logic
     local dragging, dragStart, startPos
     Header.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -113,15 +126,12 @@ function SandUI:CreateWindow(title)
     end)
 
     Header.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
     end)
 
-    -- Logic: Resizing
+    -- Resizing Logic
     local resizing = false
     local resStartPos, resStartSize
-
     ResizeHandle.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             resizing = true
@@ -133,23 +143,17 @@ function SandUI:CreateWindow(title)
     UIS.InputChanged:Connect(function(input)
         if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
             local delta = input.Position - resStartPos
-            local newWidth = math.max(250, resStartSize.X.Offset + delta.X)
-            local newHeight = math.max(200, resStartSize.Y.Offset + delta.Y)
-            Main.Size = UDim2.new(0, newWidth, 0, newHeight)
+            Main.Size = UDim2.new(0, math.max(250, resStartSize.X.Offset + delta.X), 0, math.max(200, resStartSize.Y.Offset + delta.Y))
         end
     end)
 
     UIS.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            resizing = false
-        end
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then resizing = false end
     end)
 
-    -- Window Object
     local Window = {}
     local firstTab = true
 
-    -- Function to rename the UI
     function Window:SetTitle(newTitle)
         TitleLabel.Text = newTitle
     end
@@ -163,10 +167,7 @@ function SandUI:CreateWindow(title)
         TabBtn.Font = Enum.Font.Ubuntu
         TabBtn.TextColor3 = Color3.fromRGB(80, 60, 40)
         TabBtn.TextSize = 11
-        
-        local TabCorner = Instance.new("UICorner")
-        TabCorner.CornerRadius = UDim.new(0, 4)
-        TabCorner.Parent = TabBtn
+        Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 3) -- 3px Corner
 
         local Page = Instance.new("ScrollingFrame")
         Page.Parent = PageContainer
@@ -194,9 +195,7 @@ function SandUI:CreateWindow(title)
         end
 
         TabBtn.MouseButton1Click:Connect(function()
-            for _, p in pairs(PageContainer:GetChildren()) do
-                if p:IsA("ScrollingFrame") then p.Visible = false end
-            end
+            for _, p in pairs(PageContainer:GetChildren()) do if p:IsA("ScrollingFrame") then p.Visible = false end end
             for _, b in pairs(TabContainer:GetChildren()) do
                 if b:IsA("TextButton") then
                     b.BackgroundColor3 = Color3.fromRGB(210, 180, 140)
@@ -219,8 +218,7 @@ function SandUI:CreateWindow(title)
             Btn.Text = text
             Btn.TextColor3 = Color3.fromRGB(80, 60, 40)
             Btn.TextSize = 12
-            Btn.AutoButtonColor = true
-            Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 4)
+            Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 3) -- 3px Corner
             Btn.MouseButton1Click:Connect(callback)
         end
 
@@ -231,7 +229,7 @@ function SandUI:CreateWindow(title)
             Tgl.Size = UDim2.new(1, 0, 0, 30)
             Tgl.BackgroundColor3 = Color3.fromRGB(230, 200, 160)
             Tgl.Text = ""
-            Instance.new("UICorner", Tgl).CornerRadius = UDim.new(0, 4)
+            Instance.new("UICorner", Tgl).CornerRadius = UDim.new(0, 3) -- 3px Corner
 
             local Label = Instance.new("TextLabel")
             Label.Parent = Tgl
@@ -263,7 +261,7 @@ function SandUI:CreateWindow(title)
             SliderFrame.Parent = Page
             SliderFrame.Size = UDim2.new(1, 0, 0, 40)
             SliderFrame.BackgroundColor3 = Color3.fromRGB(230, 200, 160)
-            Instance.new("UICorner", SliderFrame).CornerRadius = UDim.new(0, 4)
+            Instance.new("UICorner", SliderFrame).CornerRadius = UDim.new(0, 3) -- 3px Corner
 
             local Label = Instance.new("TextLabel")
             Label.Parent = SliderFrame
@@ -298,22 +296,13 @@ function SandUI:CreateWindow(title)
 
             local sliding = false
             SliderFrame.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    sliding = true
-                    update(input)
-                end
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then sliding = true update(input) end
             end)
-
             UIS.InputChanged:Connect(function(input)
-                if sliding and input.UserInputType == Enum.UserInputType.MouseMovement then
-                    update(input)
-                end
+                if sliding and input.UserInputType == Enum.UserInputType.MouseMovement then update(input) end
             end)
-
             UIS.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    sliding = false
-                end
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then sliding = false end
             end)
         end
 
@@ -327,11 +316,8 @@ function SandUI:CreateWindow(title)
             Box.Font = Enum.Font.Ubuntu
             Box.TextColor3 = Color3.fromRGB(80, 60, 40)
             Box.TextSize = 12
-            Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 4)
-
-            Box.FocusLost:Connect(function(enter)
-                if enter then callback(Box.Text) end
-            end)
+            Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 3) -- 3px Corner
+            Box.FocusLost:Connect(function(enter) if enter then callback(Box.Text) end end)
         end
 
         return Elements
