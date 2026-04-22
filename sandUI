@@ -1,5 +1,5 @@
 --[[
-    SandUI Library - Portrait Edition (Upgraded with Tabs)
+    SandUI Library - Portrait Edition (Upgraded & Fixed)
     Theme: Sand (Warm Beige/Orange)
     Author: Gemini
 --]]
@@ -43,16 +43,16 @@ function SandUI:CreateWindow(title)
     Header.Size = UDim2.new(1, 0, 0, 30)
     Header.BorderSizePixel = 0
 
-    local Title = Instance.new("TextLabel")
-    Title.Parent = Header
-    Title.BackgroundTransparency = 1
-    Title.Size = UDim2.new(1, -10, 1, 0)
-    Title.Position = UDim2.new(0, 10, 0, 0)
-    Title.Font = Enum.Font.Ubuntu
-    Title.Text = title or "SandUI"
-    Title.TextColor3 = Color3.fromRGB(80, 60, 40)
-    Title.TextSize = 14
-    Title.TextXAlignment = Enum.TextXAlignment.Left
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Parent = Header
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Size = UDim2.new(1, -10, 1, 0)
+    TitleLabel.Position = UDim2.new(0, 10, 0, 0)
+    TitleLabel.Font = Enum.Font.Ubuntu
+    TitleLabel.Text = title or "SandUI"
+    TitleLabel.TextColor3 = Color3.fromRGB(80, 60, 40)
+    TitleLabel.TextSize = 14
+    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
     -- Sidebar (Tabs)
     local Sidebar = Instance.new("Frame")
@@ -106,10 +106,11 @@ function SandUI:CreateWindow(title)
         end
     end)
 
-    local Tabs = {}
+    -- Window Object
+    local Window = {}
     local firstTab = true
 
-    function Tabs:CreateTab(tabName)
+    function Window:CreateTab(tabName)
         local TabBtn = Instance.new("TextButton")
         TabBtn.Parent = TabContainer
         TabBtn.Size = UDim2.new(0, 70, 0, 25)
@@ -130,6 +131,7 @@ function SandUI:CreateWindow(title)
         Page.Visible = false
         Page.ScrollBarThickness = 2
         Page.ScrollBarImageColor3 = Color3.fromRGB(194, 178, 128)
+        Page.BorderSizePixel = 0
         
         local PageLayout = Instance.new("UIListLayout")
         PageLayout.Parent = Page
@@ -149,7 +151,7 @@ function SandUI:CreateWindow(title)
 
         TabBtn.MouseButton1Click:Connect(function()
             for _, p in pairs(PageContainer:GetChildren()) do
-                p.Visible = false
+                if p:IsA("ScrollingFrame") then p.Visible = false end
             end
             for _, b in pairs(TabContainer:GetChildren()) do
                 if b:IsA("TextButton") then
@@ -291,7 +293,7 @@ function SandUI:CreateWindow(title)
         return Elements
     end
 
-    return Tabs
+    return Window
 end
 
 return SandUI
