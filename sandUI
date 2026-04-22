@@ -1,207 +1,250 @@
--- Sand Library Source
--- A lightweight, portrait-style Roblox GUI Library
--- Theme: Sand (Beige, Tan, Warm Tones)
+--[[
+    SandUI Library - Portrait Edition
+    Theme: Sand (Warm Beige/Orange)
+    Author: Gemini
+--]]
 
-local SandLib = {}
-local UserInputService = game:GetService("UserInputService")
+local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 
-function SandLib:CreateWindow(title)
-	local ScreenGui = Instance.new("ScreenGui")
-	ScreenGui.Name = "SandLib_" .. math.random(100, 999)
-	ScreenGui.Parent = CoreGui
-	ScreenGui.ResetOnSpawn = false
+local SandUI = {}
 
-	-- Main Frame
-	local Main = Instance.new("Frame")
-	Main.Name = "Main"
-	Main.Parent = ScreenGui
-	Main.BackgroundColor3 = Color3.fromRGB(245, 230, 190) -- Sand base
-	Main.BorderSizePixel = 0
-	Main.Position = UDim2.new(0.1, 0, 0.2, 0)
-	Main.Size = UDim2.new(0, 220, 0, 350) -- Portrait Small
-	Main.Active = true
-	Main.Draggable = true
+function SandUI:CreateWindow(title)
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "SandUI_" .. math.random(100, 999)
+    ScreenGui.Parent = CoreGui
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-	local UICorner = Instance.new("UICorner")
-	UICorner.CornerRadius = UDim.new(0, 8)
-	UICorner.Parent = Main
+    -- Main Frame (Portrait)
+    local Main = Instance.new("Frame")
+    Main.Name = "Main"
+    Main.Parent = ScreenGui
+    Main.BackgroundColor3 = Color3.fromRGB(244, 226, 198) -- Light Sand
+    Main.Position = UDim2.new(0.5, -100, 0.5, -150)
+    Main.Size = UDim2.new(0, 200, 0, 300)
+    Main.BorderSizePixel = 0
+    Main.ClipsDescendants = true
 
-	local UIStroke = Instance.new("UIStroke")
-	UIStroke.Thickness = 2
-	UIStroke.Color = Color3.fromRGB(194, 178, 128) -- Darker sand
-	UIStroke.Parent = Main
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.Parent = Main
 
-	-- Header
-	local Header = Instance.new("Frame")
-	Header.Name = "Header"
-	Header.Parent = Main
-	Header.BackgroundColor3 = Color3.fromRGB(210, 180, 140)
-	Header.Size = UDim2.new(1, 0, 0, 35)
-	Header.BorderSizePixel = 0
+    local UIStroke = Instance.new("UIStroke")
+    UIStroke.Color = Color3.fromRGB(194, 178, 128) -- Darker Sand
+    UIStroke.Thickness = 2
+    UIStroke.Parent = Main
 
-	local HeaderCorner = Instance.new("UICorner")
-	HeaderCorner.CornerRadius = UDim.new(0, 8)
-	HeaderCorner.Parent = Header
+    -- Header
+    local Header = Instance.new("Frame")
+    Header.Name = "Header"
+    Header.Parent = Main
+    Header.BackgroundColor3 = Color3.fromRGB(210, 180, 140) -- Tan
+    Header.Size = UDim2.new(1, 0, 0, 30)
+    Header.BorderSizePixel = 0
 
-	-- Hide bottom corners of header
-	local Cover = Instance.new("Frame")
-	Cover.Size = UDim2.new(1,0,0,5)
-	Cover.Position = UDim2.new(0,0,1,-5)
-	Cover.BackgroundColor3 = Color3.fromRGB(210, 180, 140)
-	Cover.BorderSizePixel = 0
-	Cover.Parent = Header
+    local Title = Instance.new("TextLabel")
+    Title.Parent = Header
+    Title.BackgroundTransparency = 1
+    Title.Size = UDim2.new(1, -10, 1, 0)
+    Title.Position = UDim2.new(0, 10, 0, 0)
+    Title.Font = Enum.Font.Ubuntu
+    Title.Text = title or "SandUI"
+    Title.TextColor3 = Color3.fromRGB(80, 60, 40)
+    Title.TextSize = 14
+    Title.TextXAlignment = Enum.TextXAlignment.Left
 
-	local Title = Instance.new("TextLabel")
-	Title.Parent = Header
-	Title.BackgroundTransparency = 1
-	Title.Size = UDim2.new(1, -10, 1, 0)
-	Title.Position = UDim2.new(0, 10, 0, 0)
-	Title.Font = Enum.Font.GothamBold
-	Title.Text = title or "Sand GUI"
-	Title.TextColor3 = Color3.fromRGB(100, 80, 50)
-	Title.TextSize = 14
-	Title.TextXAlignment = Enum.TextXAlignment.Left
+    -- Scroll Container
+    local Container = Instance.new("ScrollingFrame")
+    Container.Name = "Container"
+    Container.Parent = Main
+    Container.BackgroundTransparency = 1
+    Container.Position = UDim2.new(0, 5, 0, 35)
+    Container.Size = UDim2.new(1, -10, 1, -40)
+    Container.ScrollBarThickness = 2
+    Container.ScrollBarImageColor3 = Color3.fromRGB(194, 178, 128)
+    Container.CanvasSize = UDim2.new(0, 0, 0, 0)
 
-	-- Container
-	local Container = Instance.new("ScrollingFrame")
-	Container.Name = "Container"
-	Container.Parent = Main
-	Container.BackgroundTransparency = 1
-	Container.Position = UDim2.new(0, 5, 0, 40)
-	Container.Size = UDim2.new(1, -10, 1, -45)
-	Container.ScrollBarThickness = 2
-	Container.ScrollBarImageColor3 = Color3.fromRGB(194, 178, 128)
-	Container.CanvasSize = UDim2.new(0, 0, 0, 0)
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Parent = Container
+    UIListLayout.Padding = UDim.new(0, 5)
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-	local UIListLayout = Instance.new("UIListLayout")
-	UIListLayout.Parent = Container
-	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-	UIListLayout.Padding = UDim.new(0, 5)
+    UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        Container.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y)
+    end)
 
-	UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-		Container.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
-	end)
+    -- Dragging Logic
+    local dragging, dragInput, dragStart, startPos
+    Header.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = Main.Position
+        end
+    end)
 
-	local Tabs = {}
+    UIS.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local delta = input.Position - dragStart
+            Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
 
-	function Tabs:Button(text, callback)
-		local callback = callback or function() end
-		local Btn = Instance.new("TextButton")
-		Btn.Name = text
-		Btn.Parent = Container
-		Btn.BackgroundColor3 = Color3.fromRGB(235, 215, 170)
-		Btn.Size = UDim2.new(1, 0, 0, 30)
-		Btn.Font = Enum.Font.Gotham
-		Btn.Text = text
-		Btn.TextColor3 = Color3.fromRGB(120, 100, 70)
-		Btn.TextSize = 12
-		Btn.AutoButtonColor = true
+    Header.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
 
-		local BC = Instance.new("UICorner")
-		BC.CornerRadius = UDim.new(0, 4)
-		BC.Parent = Btn
+    local Elements = {}
 
-		Btn.MouseButton1Click:Connect(function()
-			callback()
-		end)
-	end
+    -- Button
+    function Elements:CreateButton(text, callback)
+        local Btn = Instance.new("TextButton")
+        Btn.Parent = Container
+        Btn.Size = UDim2.new(1, 0, 0, 30)
+        Btn.BackgroundColor3 = Color3.fromRGB(230, 200, 160)
+        Btn.Font = Enum.Font.Ubuntu
+        Btn.Text = text
+        Btn.TextColor3 = Color3.fromRGB(80, 60, 40)
+        Btn.TextSize = 13
+        Btn.AutoButtonColor = true
 
-	function Tabs:Toggle(text, default, callback)
-		local state = default or false
-		local ToggleFrame = Instance.new("TextButton")
-		ToggleFrame.Parent = Container
-		ToggleFrame.Size = UDim2.new(1, 0, 0, 30)
-		ToggleFrame.BackgroundColor3 = Color3.fromRGB(235, 215, 170)
-		ToggleFrame.Text = ""
+        local Corner = Instance.new("UICorner")
+        Corner.CornerRadius = UDim.new(0, 4)
+        Corner.Parent = Btn
 
-		local TC = Instance.new("UICorner")
-		TC.CornerRadius = UDim.new(0, 4)
-		TC.Parent = ToggleFrame
+        Btn.MouseButton1Click:Connect(function()
+            callback()
+        end)
+    end
 
-		local Label = Instance.new("TextLabel")
-		Label.Parent = ToggleFrame
-		Label.BackgroundTransparency = 1
-		Label.Position = UDim2.new(0, 10, 0, 0)
-		Label.Size = UDim2.new(0, 100, 1, 0)
-		Label.Text = text
-		Label.Font = Enum.Font.Gotham
-		Label.TextColor3 = Color3.fromRGB(120, 100, 70)
-		Label.TextSize = 12
-		Label.TextXAlignment = Enum.TextXAlignment.Left
+    -- Toggle
+    function Elements:CreateToggle(text, default, callback)
+        local state = default or false
+        local Tgl = Instance.new("TextButton")
+        Tgl.Parent = Container
+        Tgl.Size = UDim2.new(1, 0, 0, 30)
+        Tgl.BackgroundColor3 = Color3.fromRGB(230, 200, 160)
+        Tgl.Text = ""
+        Tgl.AutoButtonColor = false
 
-		local Status = Instance.new("Frame")
-		Status.Parent = ToggleFrame
-		Status.Position = UDim2.new(1, -25, 0.5, -7)
-		Status.Size = UDim2.new(0, 15, 0, 15)
-		Status.BackgroundColor3 = state and Color3.fromRGB(100, 200, 100) or Color3.fromRGB(200, 100, 100)
+        local Corner = Instance.new("UICorner")
+        Corner.CornerRadius = UDim.new(0, 4)
+        Corner.Parent = Tgl
 
-		local SC = Instance.new("UICorner")
-		SC.CornerRadius = UDim.new(1, 0)
-		SC.Parent = Status
+        local Label = Instance.new("TextLabel")
+        Label.Parent = Tgl
+        Label.Size = UDim2.new(1, -40, 1, 0)
+        Label.Position = UDim2.new(0, 10, 0, 0)
+        Label.BackgroundTransparency = 1
+        Label.Text = text
+        Label.Font = Enum.Font.Ubuntu
+        Label.TextColor3 = Color3.fromRGB(80, 60, 40)
+        Label.TextSize = 13
+        Label.TextXAlignment = Enum.TextXAlignment.Left
 
-		ToggleFrame.MouseButton1Click:Connect(function()
-			state = not state
-			Status.BackgroundColor3 = state and Color3.fromRGB(100, 200, 100) or Color3.fromRGB(200, 100, 100)
-			callback(state)
-		end)
-	end
+        local Indicator = Instance.new("Frame")
+        Indicator.Parent = Tgl
+        Indicator.Size = UDim2.new(0, 14, 0, 14)
+        Indicator.Position = UDim2.new(1, -24, 0.5, -7)
+        Indicator.BackgroundColor3 = state and Color3.fromRGB(150, 120, 80) or Color3.fromRGB(255, 255, 255)
 
-	function Tabs:Slider(text, min, max, default, callback)
-		local SliderFrame = Instance.new("Frame")
-		SliderFrame.Parent = Container
-		SliderFrame.Size = UDim2.new(1, 0, 0, 45)
-		SliderFrame.BackgroundColor3 = Color3.fromRGB(235, 215, 170)
-		
-		local SC = Instance.new("UICorner")
-		SC.CornerRadius = UDim.new(0, 4)
-		SC.Parent = SliderFrame
+        local IndCorner = Instance.new("UICorner")
+        IndCorner.CornerRadius = UDim.new(1, 0)
+        IndCorner.Parent = Indicator
 
-		local Label = Instance.new("TextLabel")
-		Label.Parent = SliderFrame
-		Label.BackgroundTransparency = 1
-		Label.Position = UDim2.new(0, 10, 0, 5)
-		Label.Size = UDim2.new(1, -20, 0, 15)
-		Label.Text = text .. " : " .. default
-		Label.Font = Enum.Font.Gotham
-		Label.TextColor3 = Color3.fromRGB(120, 100, 70)
-		Label.TextSize = 11
-		Label.TextXAlignment = Enum.TextXAlignment.Left
+        Tgl.MouseButton1Click:Connect(function()
+            state = not state
+            TweenService:Create(Indicator, TweenInfo.new(0.2), {BackgroundColor3 = state and Color3.fromRGB(150, 120, 80) or Color3.fromRGB(255, 255, 255)}):Play()
+            callback(state)
+        end)
+    end
 
-		local Bar = Instance.new("Frame")
-		Bar.Parent = SliderFrame
-		Bar.BackgroundColor3 = Color3.fromRGB(210, 180, 140)
-		Bar.Position = UDim2.new(0, 10, 0, 25)
-		Bar.Size = UDim2.new(1, -20, 0, 10)
+    -- Slider
+    function Elements:CreateSlider(text, min, max, default, callback)
+        local SliderFrame = Instance.new("Frame")
+        SliderFrame.Parent = Container
+        SliderFrame.Size = UDim2.new(1, 0, 0, 45)
+        SliderFrame.BackgroundColor3 = Color3.fromRGB(230, 200, 160)
 
-		local Fill = Instance.new("Frame")
-		Fill.Parent = Bar
-		Fill.BackgroundColor3 = Color3.fromRGB(150, 120, 80)
-		Fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-		Fill.BorderSizePixel = 0
+        Instance.new("UICorner", SliderFrame).CornerRadius = UDim.new(0, 4)
 
-		local dragging = false
-		local function move()
-			local pos = math.clamp((UserInputService:GetMouseLocation().X - Bar.AbsolutePosition.X) / Bar.AbsoluteSize.X, 0, 1)
-			local val = math.floor(min + (max - min) * pos)
-			Fill.Size = UDim2.new(pos, 0, 1, 0)
-			Label.Text = text .. " : " .. val
-			callback(val)
-		end
+        local Label = Instance.new("TextLabel")
+        Label.Parent = SliderFrame
+        Label.Size = UDim2.new(1, -10, 0, 20)
+        Label.Position = UDim2.new(0, 10, 0, 2)
+        Label.BackgroundTransparency = 1
+        Label.Text = text .. ": " .. default
+        Label.Font = Enum.Font.Ubuntu
+        Label.TextColor3 = Color3.fromRGB(80, 60, 40)
+        Label.TextSize = 12
+        Label.TextXAlignment = Enum.TextXAlignment.Left
 
-		Bar.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true move() end
-		end)
-		UserInputService.InputEnded:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
-		end)
-		UserInputService.InputChanged:Connect(function(input)
-			if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then move() end
-		end)
-	end
+        local Bar = Instance.new("Frame")
+        Bar.Parent = SliderFrame
+        Bar.Size = UDim2.new(1, -20, 0, 6)
+        Bar.Position = UDim2.new(0, 10, 0, 30)
+        Bar.BackgroundColor3 = Color3.fromRGB(210, 180, 140)
 
-	return Tabs
+        local Fill = Instance.new("Frame")
+        Fill.Parent = Bar
+        Fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
+        Fill.BackgroundColor3 = Color3.fromRGB(150, 120, 80)
+        Fill.BorderSizePixel = 0
+
+        local function update(input)
+            local pos = math.clamp((input.Position.X - Bar.AbsolutePosition.X) / Bar.AbsoluteSize.X, 0, 1)
+            local value = math.floor(min + (max - min) * pos)
+            Fill.Size = UDim2.new(pos, 0, 1, 0)
+            Label.Text = text .. ": " .. value
+            callback(value)
+        end
+
+        local sliding = false
+        SliderFrame.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                sliding = true
+                update(input)
+            end
+        end)
+
+        UIS.InputChanged:Connect(function(input)
+            if sliding and input.UserInputType == Enum.UserInputType.MouseMovement then
+                update(input)
+            end
+        end)
+
+        UIS.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                sliding = false
+            end
+        end)
+    end
+
+    -- Input
+    function Elements:CreateInput(placeholder, callback)
+        local Box = Instance.new("TextBox")
+        Box.Parent = Container
+        Box.Size = UDim2.new(1, 0, 0, 30)
+        Box.BackgroundColor3 = Color3.fromRGB(255, 245, 230)
+        Box.PlaceholderText = placeholder
+        Box.Text = ""
+        Box.Font = Enum.Font.Ubuntu
+        Box.TextColor3 = Color3.fromRGB(80, 60, 40)
+        Box.TextSize = 13
+
+        Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 4)
+
+        Box.FocusLost:Connect(function(enter)
+            if enter then
+                callback(Box.Text)
+            end
+        end)
+    end
+
+    return Elements
 end
 
-return SandLib
+return SandUI
